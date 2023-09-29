@@ -1,11 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat space</title>
   </head>
-  <body>
-    <h2>Welcome to the chat space</h2>
+  <body style="margin-top: 50px">
+    <div class="container m-t-4">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="well">
+            <ul class="list-group" id="users"></ul>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="chat" id="chat"></div>
+          <form action="" class="messageForm" id="messageForm">
+            <div class="form-group">
+              <textarea
+                id="message"
+                class="form-control"
+                placeholder="Type message...."
+              ></textarea>
+              <br />
+              <input
+                type="submit"
+                class="btn btn-primary"
+                value="Send message"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+      const socket = io.connect();
+      let messageForm = document.querySelector("#messageForm");
+      let message = document.getElementById("message");
+      let chat = document.getElementById("chat");
+
+      messageForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        socket.emit("send message", message.value);
+        message.value = " ";
+      });
+
+      socket.on("new message", (data) => {
+        console.log("recieved new message", data.msg);
+        chat.innerHTML +=
+          '<div style=background-color:grey;margin-bottom:10px;color:white;padding:10px;border-radius:8px;  class="well">' +
+          data.msg +
+          "</div>";
+      });
+    </script>
   </body>
 </html>
